@@ -42,6 +42,10 @@
 	\end{itemize}
 	Considering the cascade of the bandpass and lowpass filter, a total delay of 224 samples is introduced. Considering a sample frequency of 1kHz, the delay is of 224ms, which is below the perceivable delay by the user, which is around 300ms \cite{delaySensitivity}.
 	
+	\subsubsection*{Control notes:}
+	The virtual environment does not provides any dynamics, that is the reference position applied in input is directly applied to the moving cursor.\\
+	For this reason, the muscle activation has been estimated as binary signal and a limited slew-rate has been implemented to move more smoothly the cursor.
+	
 	\subsection*{Reaching the cardinal positions}
 	Each muscle is mapped toward a direction:
 	\begin{itemize}
@@ -50,30 +54,30 @@
 		\item[$-$] trapezius right: North
 		\item[$-$] trapezius left: South
 	\end{itemize}
-	When the envelop signal overcomes a threshold, the muscle is considered activ and a discrete signal to 1 is generated. When it is lower than the threshold, a signal with amplitude 0 is generated. this binary signal drives the cursor to its positions.\\
-	To move the cursor smoothly, a slew-rate on the digital signal is applied, which sets the velocity the cursor reaches the targets.
+	When the envelop signal overcomes a threshold, the muscle is considered active and a discrete signal to 1 is generated. When it is lower than the threshold, a signal with amplitude 0 is generated. This binary signal drives the cursor to its positions.\\
+	To move the cursor smoothly, a slew-rate on the digital signal is applied, which sets the velocity the cursor reaches the targets with.
 	
 	\subsection*{Reaching positions on the diagonal}
 	The implemented control is exactly the same as the one implemented to reach the cardinal points, but such control is remapped by a rotation matrix of angle 45 degree.
 	
 	\subsection*{Reaching all 8 directions}
-	The muscle activations are almost exclusive, that means that there are not any co-contraction.\\
+	The muscle activations are almost exclusive, that means that there are not any co-contractions.\\
 	The EMG signal of the trapezius, both left and right, presents some signals at the same time as the biceps contractions, but it seems more noise than a voluntary co-contraction, thus they are not considered.\\
-	A simple method to achieve the desired task, is to consider a switch which remap each muscle towards a different target position.\\
+	A simple method to achieve the desired task is to consider a switch which remap each muscle towards a different target position.\\
 	In the provided EMG dataset, each muscle has two contractions, this way, in the Simulink simulation, it has been considered the use of a different mapping on the first contraction with respect to the second one, to simulate the action of the functional switch between the two contractions.\\
 	The mapping is switched between the control of the first task, for reaching the cardinal positions and that one for the targets on the diagonal.\\
-	The implemented control with the concept of the switch between mappings, is simple and involves few muscles, but it has the disadvantage of taking time to execute a task, since there will be a sequence of movement and change of mapping to be performed in order to reach the desired goal.
+	The implemented control with the concept of the switch between mappings is simple and involves few muscles, but it has the disadvantage of taking time to execute a task, since there will be a sequence of movement and change of mapping to be performed in order to reach the desired goal.
 	
 	\subsubsection*{Other possible implementations}
-	To control 8 direction with only 4 muscles, it would be possible to apply different techniques:
+	To control 8 direction with only 4 EMG muscle signals, it would be possible to apply different techniques:
 	\begin{itemize}
 		\item co-contraction\\
 			It would be possible to use some combination of muscle co-contractions. This way it is possible to generate independent control sequences to control all the 8 target directions.
 		\item feature extractions\\
-			For each muscle contraction, one or more features should be extracted and used to distinguish among different activations of the same muscle.\\
-			In the presented case, some of the feature extraction have been tried \cite{emgFeatures}, but there were not any significant difference between the two contraction of the same muscle. The only feature that could be used, is the integral of the EMG envelop, which provides information about the duration and amplitude of the contraction. However, with the current dataset, there will be a delay of some second between the contraction and the movement of the cursor, which is not admissible.
+			For each muscle contraction, more features should be extracted and used to distinguish among different activations of the same muscle.\\
+			In the presented case, some of the time-domain feature presented in \cite{emgFeatures} have been tried, but there were not any significant difference between the two contraction of the same muscle. The only feature that could be used, is the integral of the EMG envelop, which provides information about the duration and amplitude of the contraction. However, with the current dataset, there will be a delay of some second between the contraction and the movement of the cursor, which could be not acceptable.
 		\item machine learning and neural network methods\\
-			It would be possible to use the feature extracted to train a model and been able to move to all the 8 desired directions.
+			It would be possible to use the feature extracted from the EMG signals to train a model and been able to move to all the 8 desired directions with the trained model.
 	\end{itemize}
 
 \printbibliography
